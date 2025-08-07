@@ -1,5 +1,5 @@
 import { Background } from '../components/background/Background'
-import { MindGame } from '../components/games/MindGame'
+import { MindGame } from '../components/games/mindGame/MindGame'
 
 export const GamePage = () => {
   return (

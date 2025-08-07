@@ -1,19 +1,13 @@
-import { NavLink } from 'react-router'
+import '../App'
 import { Background } from '../components/background/Background'
 
 export const HomePage = () => {
   return (
     <nav>
-      <Background>
-        <div className='navigation-menu'>
-          <NavLink to={'/game'} end>
-            Mind Game
-          </NavLink>
-          <NavLink to={'/'} end>
-            Home
-          </NavLink>
-        </div>
-      </Background>
+      <Background />
+      <div className='centered-wrapper'>
+        <h1 className='arcade-text'>ILYASUS 2000</h1>
+      </div>
     </nav>
   )
 }
