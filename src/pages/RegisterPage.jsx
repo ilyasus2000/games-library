@@ -1,9 +1,59 @@
-import { Box, Button, TextField, Typography } from '@mui/material'
+import { yupResolver } from '@hookform/resolvers/yup'
+import {
+  Alert,
+  Box,
+  Button,
+  Snackbar,
+  TextField,
+  Typography,
+} from '@mui/material'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
+import * as yup from 'yup'
 import { Background } from '../components/background/Background'
+import { isUserExists, saveUser } from '../components/utils/storage'
+
+const schema = yup.object().shape({
+  username: yup.string().required('Enter login'),
+  email: yup.string().email('Incorrect email').required('Enter email'),
+  password: yup
+    .string()
+    .min(6, 'Minimum 6 characters')
+    .required('Enter password'),
+})
 
 export const RegisterPage = () => {
   const navigate = useNavigate()
+  const [snackbarOpen, setSnackbarOpen] = useState(false)
+  const [snackbarMessage, setSnackbarMessage] = useState('')
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success')
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  })
+
+  const onSubmit = data => {
+    if (isUserExists(data.username)) {
+      setSnackbarMessage('Username already taken')
+      setSnackbarSeverity('error')
+      setSnackbarOpen(true)
+      return
+    }
+
+    saveUser(data)
+    setSnackbarMessage('Registration successful!')
+    setSnackbarSeverity('success')
+    setSnackbarOpen(true)
+
+    setTimeout(() => {
+      navigate('/')
+    }, 1500)
+  }
   return (
     <>
       <Background />
@@ -47,14 +97,18 @@ export const RegisterPage = () => {
 
           <Box
             component='form'
+            onSubmit={handleSubmit(onSubmit)}
             sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
           >
-            {['Username', 'Email', 'Password'].map((label, idx) => (
+            {['username', 'email', 'password'].map(field => (
               <TextField
-                placeholder={label}
-                type={label === 'Password' ? 'password' : 'text'}
-                variant='outlined'
+                key={field}
+                placeholder={field[0].toUpperCase() + field.slice(1)}
+                type={field === 'password' ? 'password' : 'text'}
                 fullWidth
+                {...register(field)}
+                error={!!errors[field]}
+                helperText={errors[field]?.message}
                 InputProps={{
                   sx: {
                     fontFamily: '"Press Start 2P", monospace',
@@ -78,6 +132,7 @@ export const RegisterPage = () => {
             ))}
 
             <Button
+              type='submit'
               variant='contained'
               sx={{
                 mt: 3,
@@ -120,6 +175,28 @@ export const RegisterPage = () => {
           </style>
         </Box>
       </Box>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => {
+          setSnackbarOpen(false)
+        }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClick={() => {
+            setSnackbarOpen(false)
+          }}
+          severity={snackbarSeverity}
+          variant='filled'
+          sx={{
+            fontFamily: '"Press Start 2P", monospace',
+          }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </>
   )
 }
