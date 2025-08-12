@@ -1,8 +1,31 @@
 import { Box, Button, TextField, Typography } from '@mui/material'
-
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Background } from '../components/background/Background'
 
 export const LoginPage = () => {
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const navigate = useNavigate()
+
+  const handleLogin = e => {
+    e.preventDefault()
+
+    const users = JSON.parse(localStorage.getItem('users') || '[]')
+
+    const user = users.find(
+      u => u.username === username && u.password === password
+    )
+
+    if (user) {
+      localStorage.setItem('currentUser', JSON.stringify(user))
+      navigate('/home')
+    } else {
+      setError('Invalid username or password')
+    }
+  }
+
   return (
     <>
       <Background />
@@ -45,14 +68,22 @@ export const LoginPage = () => {
 
           <Box
             component='form'
+            onSubmit={handleLogin}
             sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
           >
-            {['Username', 'Password'].map((label, idx) => (
+            {['Username', 'Password'].map(label => (
               <TextField
+                key={label}
                 placeholder={label}
                 type={label === 'Password' ? 'password' : 'text'}
                 variant='outlined'
                 fullWidth
+                value={label === 'Password' ? password : username}
+                onChange={e =>
+                  label === 'Password'
+                    ? setPassword(e.target.value)
+                    : setUsername(e.target.value)
+                }
                 InputProps={{
                   sx: {
                     fontFamily: '"Press Start 2P", monospace',
@@ -75,7 +106,14 @@ export const LoginPage = () => {
               />
             ))}
 
+            {error && (
+              <Typography sx={{ color: 'red', fontSize: '12px', mt: 1 }}>
+                {error}
+              </Typography>
+            )}
+
             <Button
+              type='submit'
               variant='contained'
               sx={{
                 mt: 3,
@@ -91,11 +129,11 @@ export const LoginPage = () => {
 
           <style>
             {`
-						@keyframes flicker {
-							0%, 100% { opacity: 1; }
-							50% { opacity: 0.7; }
-						}
-					`}
+              @keyframes flicker {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.7; }
+              }
+            `}
           </style>
         </Box>
       </Box>

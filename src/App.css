@@ -1,50 +1,7 @@
-.arcade-text {
-  font-family: 'Press Start 2P', monospace;
-  color: #00ffcc;
-  font-size: 24px;
-  text-align: center;
-  animation: showUp 1.5s ease-out forwards, glow 1s infinite alternate;
-  opacity: 0;
-  transform: translateY(30px);
-}
-
-@keyframes showUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes glow {
-  0% {
-    text-shadow: 0 0 2px #00ffcc;
-  }
-  100% {
-    text-shadow: 0 0 2px #00ffcc, 0 0 4px #00ffcc;
-  }
-}
-
 body,
 html {
   margin: 0;
   padding: 0;
   overflow: hidden;
   background: black;
-}
-
-.centered-wrapper {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-}
-
-.arcade-text {
-  font-family: 'Press Start 2P', monospace;
-  color: #00ffcc;
-  font-size: 24px;
-  animation: showUp 1.5s ease-out forwards, glow 1s infinite alternate;
-  opacity: 0;
-  transform: translateY(30px);
 }
